@@ -1,0 +1,126 @@
+{
+  "variant": "full",
+  "task_score": 1.0,
+  "terminated": true,
+  "termination_reason": "success",
+  "steps": 2358,
+  "run_limit_steps": 3600,
+  "final_stage": "flush_tight",
+  "rail_shift_mm": 2.885424665180649,
+  "rail_turn_deg": 0.06469873957868756,
+  "bracket": {
+    "across_mm": -0.11637696915348217,
+    "along_mm": -6.818428540997887,
+    "seat_mm": [
+      0.0014235018778860006,
+      -0.017547136450263116
+    ],
+    "gaps_mm": [
+      0.4095443565164409,
+      0.3777614531941605,
+      0.12682331245857667,
+      0.09504040913629581
+    ],
+    "yaw_deg": -0.5399654922618851,
+    "tilt_deg": 0.05739726074882455,
+    "screw_turns": 1.7149061383149595,
+    "clamp_N": 10.861572809517384
+  },
+  "max_rail_shift_mm": 2.9168629362034793,
+  "max_rail_turn_deg": 0.45176822233077285,
+  "report": {
+    "_ik_bad": 0,
+    "lifted_step": 131,
+    "lined_up": {
+      "across_mm": -0.595,
+      "along_mm": -0.259,
+      "lift_mm": -0.046
+    },
+    "on_rail_step": 327,
+    "on_rail": {
+      "stage": "seated",
+      "seat_mm": [
+        0.05050889742615108,
+        0.05876416229463107
+      ],
+      "across_mm": 0.13116315081985044,
+      "along_mm": -105.39054352669585
+    },
+    "slid_step": 505,
+    "slid": {
+      "stage": "seated",
+      "seat_mm": [
+        0.5325723269314319,
+        0.5852679658085065
+      ],
+      "across_mm": 0.19237366698592748,
+      "along_mm": -23.21777239702543,
+      "yaw_deg": -0.13995772063032064
+    },
+    "flush_step": 646,
+    "presented_step": 900,
+    "wrist_q6_sign": 1.0,
+    "strokes": 5,
+    "slips": 3,
+    "centre_err_mm": [
+      1.606,
+      0.916,
+      1.769,
+      0.915,
+      1.514,
+      0.881,
+      0.132,
+      0.907,
+      0.224,
+      0.3
+    ],
+    "insert_errors": [
+      {
+        "xy_mm": [
+          0.808,
+          0.482
+        ],
+        "angle_deg": 0.23
+      },
+      {
+        "xy_mm": [
+          0.077,
+          -1.222
+        ],
+        "angle_deg": -0.1
+      },
+      {
+        "xy_mm": [
+          0.832,
+          0.467
+        ],
+        "angle_deg": 0.07
+      },
+      {
+        "xy_mm": [
+          -0.689,
+          -0.555
+        ],
+        "angle_deg": -0.11
+      },
+      {
+        "xy_mm": [
+          -0.225,
+          -0.239
+        ],
+        "angle_deg": -0.05
+      }
+    ],
+    "spiral_hits": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "engaged": false,
+    "engaged_step": 1342,
+    "success_step": 2298
+  },
+  "wall_s": 325.7349851131439
+}
