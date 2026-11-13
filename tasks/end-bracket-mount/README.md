@@ -6,8 +6,8 @@ blocks mounted on it. A screw-fixed end bracket and a flat-blade screwdriver lie
 the rail; the other puts the bracket on the rail (slides it on from the rail's free end, its hook under one lip), pushes it
 flush against the last terminal block of the row and tightens its clamping screw with the screwdriver to 0.5 Nm.
 
-The bracket is shaped like a Weidmüller WEW 35/2 (its outline is the manufacturer's CAD); the screwdriver is a
-0.8 x 4.0 mm flat blade (a stubby, 85 mm long), the size for its M4 slotted screw. Tightening takes 1.6-1.8 turns
+All parts are our own simplified designs (no manufacturer CAD; see *How the parts are built*). The screwdriver is a
+0.8 x 4.0 mm flat blade (a stubby, 85 mm long), the size for the bracket's M4 slotted screw. Tightening takes 1.6-1.8 turns
 from backed out, so the hand must reset the screwdriver between wrist strokes (the YAM wrist turns +-120 degrees).
 
 **Status:** the scripted two-arm demo reaches the full score (1.0) on CPU PhysX; the variants score as the ladder
@@ -41,7 +41,7 @@ the GPU.
 
 `task_score` gives 1.0 when the episode ends in success, otherwise `score()` at the last step. Runtime per trial: about 30 s of simulator
 start-up, then about 8 control steps per second on CPU PhysX with the three cameras rendering at 320 x 176 on the GPU
-(the scripted demo: 2,358 steps in 326 s with 640 x 360 video); a full 3,600-step trial is about 8 minutes.
+(the scripted demo: 2,247 steps in 205 s with 640 x 360 video); a full 3,600-step trial is about 8 minutes.
 
 Scripted demo (drives the same embodiment and task-file scoring directly; CPU physics by default):
 
@@ -62,8 +62,8 @@ All measured in the rail's own frame, at the end of the episode:
 | 0.25 | **lifted**: the bracket's lowest point 25 mm or more above the table |
 | 0 | otherwise |
 
-- **Tight:** in a real trial, the screw takes at least 0.5 Nm to turn further (the data sheet's minimum tightening
-  torque), checked with a torque screwdriver set to 0.5 Nm. In the simulation: the screw turned at least 1.6 turns
+- **Tight:** in a real trial, the screw takes at least 0.5 Nm to turn further (the bracket's rated tightening
+  torque in this task), checked with a torque screwdriver set to 0.5 Nm. In the simulation: the screw turned at least 1.6 turns
   from backed out (0.25 turn past the jaw's first contact at 1.37) with the jaw pressing on the far lip (2 N or more):
   the simulation's stand-in, see Fidelity.
 - **Still:** under 10 mm/s and 0.5 rad/s, from the bracket's pose change over the last control step.
@@ -84,16 +84,24 @@ jointed parts. `eb_parts.py` is the task's own minimal mechanism; nothing in yam
 subclasses yam_arena's `Box`; `task.py` calls `eb_parts.install()`, which wraps `yam_arena.scene.task_object` and
 `object_states` when that module is imported, and spawns the parts from USD files it writes to a temporary folder.
 
+**Geometry and licensing:** every part's geometry was created by us for this task and is written into `eb_parts.py`
+as coordinates (a few dozen points per outline); no manufacturer CAD, meshes or other third-party assets are used.
+The designs follow public standards: the TS35 x 7.5 rail profile (EN 60715) and the M4 slotted cheese-head screw
+(DIN 84). The robot, table and cameras are yam_arena's own, unchanged.
+
 - **Rail** (one free rigid body, 130 g with its blocks, steel friction 0.3): TS35 x 7.5, 1 mm web and walls, lips 2 mm thick with
-  outer edges at +-17.5 mm. A row of four beige terminal blocks (WDU 2.5 outline, 5.1 mm thick each, side by side) is part of the same body.
-- **End bracket** (an articulation of four bodies, 13.9 g as the data sheet): the WEW 35/2 outline from the
-  manufacturer's STEP file (8 x 56.1 x 46.5 mm), sectioned and simplified to 0.3 mm and written into `eb_parts.py` as
-  coordinates; it collides as 18 convex pieces.
-  - *What is from the manufacturer:* outline and size, mass, material (polyamide), screw fixing (not snap-on),
-    tightening torque 0.5-1 Nm, the centred vertical screw bore (M4) and the screw recess on top.
-  - *What is assumed* (the manufacturer's CAD is an outer shell, and no public source describes the inside): a fixed
-    hook under one lip (1.5 mm reach, 0.8 mm play); on the other side a steel jaw driven by the screw through a wedge
-    (1.3 mm along a 20 degree line per turn: inward and up under the lip); guide faces 0.2 mm outside both lip edges.
+  outer edges at +-17.5 mm. A row of four beige terminal blocks is part of the same body: our own simplified design of
+  a generic 2.5 mm2 screw-clamp feed-through block (5.2 mm thick along the rail, 52 mm across, 40 mm tall; two wire-entry
+  shoulders, two screws in wells on top with a marker groove between them, latch feet beside the lips; 7.5 g each,
+  estimated).
+- **End bracket** (an articulation of four bodies, 14 g, estimated for a cored polyamide moulding): our own design,
+  8 x 56 x 46 mm, its section extruded through the 8 mm thickness; it collides as 14 convex pieces plus two guides and the hook.
+  - *What fixes its shape:* the seat on the lip tops (0.2 mm wider than the lips each side), skirts straddling the
+    lips down to 0.5 mm above the table with chamfered inner faces, and a 10 mm wide screw recess in the middle of the
+    top, its floor 32 mm above the seat. The rest (straight sides with a waist, chamfered top corners) is plain styling.
+  - *The mechanism* (our design; a common principle for screw-fixed end brackets): a fixed hook under one lip (1.5 mm
+    reach, 0.8 mm play); on the other side a steel jaw driven by the screw through a wedge (1.3 mm along a 20 degree
+    line per turn: inward and up under the lip); guide faces 0.2 mm outside both lip edges.
   - Screw and jaw are coupled by a PhysX mimic joint (rotation drives the jaw; no scripted motion). The jaw sits on a
     100 N/mm spring (the housing's and wedge's compliance). The screw is an M4 slotted cheese head (DIN 84: 7 mm head,
     1.2 mm slot).
@@ -112,10 +120,10 @@ The screw is turned by a torque-limited "virtual screwdriver" that presses 10 N 
 | --- | --- |
 | free running torque | 0.03 Nm |
 | jaw touches the lip | 1.37 turns from backed out |
-| tight (1.6 turns, jaw pressing) | 1.61 turns, jaw force 17 N, the bracket level within 0.12 degrees |
+| tight (1.6 turns, jaw pressing) | 1.61 turns, jaw force 17 N, the bracket level within 0.11 degrees |
 | tight screw left alone | stays (friction 0.03 Nm; the jaw pushes back with 0.003 Nm) |
 | loose bracket pushed along the rail | slides at 0.1 N |
-| tightened bracket pushed along the rail | slides at 2.0 N (loose: 0.1 N); see Known weak points |
+| tightened bracket pushed along the rail | slides at 1.9 N (loose: 0.1 N); see Known weak points |
 | tightened bracket pulled straight up at 60 N | stays on (moved 0.4 mm) |
 | screw turned back out one turn | the jaw releases fully |
 
@@ -136,13 +144,13 @@ lags its command by 1-2 mm), lowers it in, and tightens in wrist strokes, pressi
 blade out, turns back in the air and re-engages, choosing the blade's way round that gives the longest next stroke.
 Meanwhile the right arm holds the rail down right behind the bracket, its pads a stop that keeps the bracket square
 against the block (the screw's friction twists a loose bracket within its guides' play otherwise). When the bracket
-is tight the left arm lifts the screwdriver out and lays it on the table. Measured (CPU PhysX, 20 Hz control, jitter 0): **success at step 2,358** of 3,600 (score 1.0); 5 strokes (three
-slips, each recovered), 1.71 turns, jaw force 10.9 N; the bracket flush (gaps 0.41 mm or less), square (yaw 0.54
-degrees) and level (0.06 degrees); the rail moved 2.9 mm and turned 0.06 degrees.
+is tight the left arm lifts the screwdriver out and lays it on the table. Measured (CPU PhysX, 20 Hz control, jitter 0): **success at step 2,187** of 3,600 (score 1.0); 4 strokes, no
+slips, 1.75 turns, jaw force 15 N; the bracket flush (gaps 0.05 mm or less), square (yaw 0.0 degrees) and level (0.35
+degrees); the rail moved 1.7 mm and turned 0.2 degrees. The video runs 3 s past success (2,247 steps).
 
 Why these choices (found on the GPU): the YAM finger pads are 27 mm wide, and the only flat parallel faces of the
 bracket that wide are its two big faces, so it stands on its feet and is pinched across its thickness; tilting it on
-about its hook doesn't fit rigid-body physics (the CAD skirts reach to 0.5 mm above the table), so it slides on from
+about its hook doesn't fit rigid-body physics (its skirts reach to 0.5 mm above the table), so it slides on from
 the rail's free end, the other way an electrician fits one; pointing straight down over the rail the arms reach only
 12-16 cm above the table, so the screwdriver is a stubby (a standard 100 mm one puts the hand at 21-23 cm).
 
@@ -150,30 +158,31 @@ Variants proving the ladder (CPU PhysX):
 
 | variant | what the arms do | score | notes |
 | --- | --- | --- | --- |
-| `full` | as above | **1.0** (success) | success at step 2,358 |
-| `no_hold` | the rail is never held | **0.25** (capped) | sliding the bracket on shoves the loose rail 92 mm and turns it 15 degrees; the run stops 1 s after the rail leaves its limits. The bracket ends up seated on the moved rail, but a moved rail caps the score at 0.25 (in an earlier run with one block it fell off: 0.0) |
-| `no_screw` | slid on and pushed flush, never tightened | **0.75** | flush, gaps 0.10-0.16 mm |
-| `no_push` | slid on, stopped 20 mm short of the row, tightened there | **0.5** | seated and tight (1.77 turns, jaw force 17 N), not flush (gaps 18-19 mm) |
+| `full` | as above | **1.0** (success) | success at step 2,187 |
+| `no_hold` | the rail is never held | **0.0** | sliding the bracket onto the rail's end shoves the loose rail 105 mm and turns it 23 degrees; the run stops 1 s after the rail leaves its limits, with the bracket still in the hand at the rail's end (neither seated nor lifted 25 mm). A moved rail caps any score at 0.25 (in an earlier version of the scene the bracket ended up seated on the moved rail: 0.25, capped) |
+| `no_screw` | slid on and pushed flush, never tightened | **0.75** | flush, gaps 0.06 mm |
+| `no_push` | slid on, stopped 20 mm short of the row, tightened there | **0.5** | seated and tight (1.77 turns, jaw force 11 N), not flush (gaps 19-20 mm) |
 
 ## Dream-1 run
 
 One trial with the command under *Run and score a trial* (`--policy dream`, CPU PhysX, cameras 320 x 176,
-3,600 steps, 335 s): **task_score 0.0** (hit the step limit). Neither arm holds the rail (it stays in place); the right
-arm reaches toward the parts, knocks the bracket over and sets the screwdriver upright on its handle; nothing is
-lifted onto the rail. Videos and log in `runs/dream1/`.
+3,600 steps, 244 s): **task_score 0.0** (hit the step limit). Neither arm holds the rail (it stays in place); the right
+arm reaches again and again toward the screwdriver and the bracket and nudges them on the table, but lifts nothing
+onto the rail. Videos and log in `runs/dream1/`.
 
 ## Fidelity: what is simplified
 
 - Rail lips 2 mm thick (1 mm on a real rail) so contacts don't tunnel at 240 Hz; the bracket's hook and jaw sit
   under the thickened lips.
-- The bracket's inside (hook, wedge jaw, guides) is assumed, not from the manufacturer.
+- The bracket and blocks are simplified designs of our own (see *Geometry and licensing*), not copies of a
+  particular product; the bracket's mechanism (hook, wedge jaw, guides) is our design.
 - The screw's thread is a mimic-joint coupling and its friction a constant 0.03 Nm. Tightness is judged by the screw's turns
   past the jaw's contact (0.25 turn, with the jaw pressing), not torque: a friction that rises with the clamp would have to be rewritten to PhysX while the
-  screw turns, and each rewrite kicks a turning screw (the screwdriver jumps out of the slot). So the turns match the
-  real part, but the simulated screwdriver needs far less torque than 0.5 Nm, and a real M4 screw at 0.5 Nm clamps
-  with several hundred newtons.
+  screw turns, and each rewrite kicks a turning screw (the screwdriver jumps out of the slot). So the simulated
+  screwdriver needs far less torque than 0.5 Nm, and a real M4 screw at 0.5 Nm clamps with several hundred newtons.
 - The slot's top edges are chamfered 0.3 mm (it lets a blade within about 0.5 mm drop in, for PhysX's ~0.3 mm contact
-  error); the head collides as a block across the slot (it looks round).
+  error). The head collides as two round half-discs with a thin chamfered cap on top; all of it stays within 3.8 mm
+  of the screw's axis, inside the bracket's 8 mm thickness, so the turning head never touches the terminal block.
 - The screw head does not sink as it turns; the screwdriver's blade tip is a flat box.
 - The four beige blocks are rigidly part of the rail (a real latched row could be pushed along the rail; here the
   row can't move). No end plate, no end bracket at the row's other end.
@@ -183,8 +192,8 @@ lifted onto the rail. Videos and log in `runs/dream1/`.
 ## Known weak points
 
 - CPU physics is required (`-E device=cpu`): on GPU PhysX the blade-in-slot contact doesn't turn the screw.
-- A tightened bracket resists only ~2 N along the rail (the jaw's force creeps in PhysX; a real WEW 35/2 locks the
-  terminal row). The scoring doesn't depend on it (it checks the screw's turns with the jaw pressing), but a policy
+- A tightened bracket resists only ~2 N along the rail (the jaw's force creeps in PhysX; a real screw-fixed end bracket
+  locks the terminal row). The scoring doesn't depend on it (it checks the screw's turns with the jaw pressing), but a policy
   that bumps the bracket after tightening can push it out of flush.
 - The scripted demo's screwdriver handling isn't fully robust: the blade sometimes slips out of the slot and the hand
   re-engages (each costs ~10 s); runs vary a little from one to the next.

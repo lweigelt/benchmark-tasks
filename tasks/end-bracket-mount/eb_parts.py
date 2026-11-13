@@ -1,5 +1,6 @@
-"""The task's own parts: a loose TS35 DIN rail with one terminal block mounted on it, a screw-fixed end bracket
-(shaped like a Weidmueller WEW 35/2) with a working clamping screw, and a flat-blade screwdriver.
+"""The task's own parts: a loose TS35 DIN rail with a row of terminal blocks mounted on it, a screw-fixed end
+bracket with a working clamping screw, and a flat-blade screwdriver. All geometry is our own simplified design,
+drawn from the TS35 rail standard (EN 60715) and the screw's standard (DIN 84); no manufacturer CAD is used.
 
 yam_arena task files support single primitives and library assets only, and yam_arena has no extension point for
 multi-shape or jointed parts. This module is the task's own minimal mechanism, kept in the task folder (the same
@@ -15,14 +16,13 @@ The parts (dimensions in mm in comments, metres in code):
 
 - rail (one free rigid body): steel TS35 x 7.5 top-hat rail lying web-down, 1 mm sheet but 2 mm lips (thickened so
   contacts cannot tunnel through them at 240 Hz), lip outer edges at +-17.5 from the centreline. A row of ROW_BLOCKS
-  beige terminal blocks (WDU 2.5 outline) is mounted on it as part of the same body. No end brackets.
-- bracket (an articulation of four bodies): an end bracket shaped like a Weidmueller WEW 35/2 (8 wide along the
-  rail, 56.1 across, 46.5 tall). The outline is the manufacturer's STEP file (``assets/1061200000.stp``) sectioned
-  and simplified to 0.3 mm, coded below as coordinates (no CAD file is read at run time). The manufacturer's CAD
-  is an outer shell without the screw or clamp, so the mechanism is our assumption (see below).
-- driver: a flat-blade screwdriver for M4 slotted screws (blade 0.8 x 4.0, 100 mm shaft, 26 mm handle).
+  beige terminal blocks (our own design of a generic 2.5 mm2 screw-clamp block, 5.2 thick, 52 across, 40 tall) is
+  mounted on it as part of the same body. No end brackets.
+- bracket (an articulation of four bodies): a screw-fixed end bracket of our own design (8 wide along the rail, 56
+  across, 46 tall), its outline coded below as coordinates.
+- driver: a stubby flat-blade screwdriver for M4 slotted screws (blade 0.8 x 4.0, 25 mm shaft, 26 mm handle).
 
-The bracket mechanism (assumed; the real part's internals are not published):
+The bracket mechanism (our design, a common principle for screw-fixed end brackets):
 - Fixed hook on the -x side: reaches 1.5 under that lip with 0.8 vertical play. The bracket goes on by hooking this
   side under its lip and tilting the bracket down over the other lip (or by sliding it on from a free rail end).
 - Clamping jaw on the +x side, driven by the M4 clamping screw through a wedge: turning the screw clockwise (seen
@@ -31,7 +31,7 @@ The bracket mechanism (assumed; the real part's internals are not published):
 - The jaw sits on a stiff spring (the compliance of the plastic housing and the wedge): its compression is the
   clamp. The screw turns against a constant friction (FREE_TORQUE). The scorer calls the bracket tight when the screw
   has turned TIGHT_TURNS (0.25 turn past the jaw's first contact) and the jaw presses on the lip: the simulation's
-  stand-in for the data sheet's 0.5 Nm tightening torque. (A friction rising with the clamp would need the screw joint's friction rewritten
+  stand-in for the rated 0.5 Nm tightening torque. (A friction rising with the clamp would need the screw joint's friction rewritten
   to PhysX while it turns, and each rewrite kicks a turning screw: the screwdriver jumps out of the slot.)
 
 Frames: the rail's origin is the centre of its web's underside (x across the rail, y along it, z up). The bracket's
@@ -63,96 +63,72 @@ LIP_THICK = 2.0 * MM  # simulation: a real rail's lips are 1 mm (thickened so co
 LIP_EDGE = 17.5 * MM  # lips' outer edges, from the centreline
 LIP_INNER = 13.5 * MM  # outer faces of the side walls, where the lips start
 ROW_BLOCKS = 4  # beige terminal blocks mounted side by side on the rail: the terminal strip the bracket closes off
-RAIL_MASS = 0.10 + ROW_BLOCKS * 0.0076  # kg: 24 cm of 1 mm steel TS35 rail plus the mounted WDU 2.5 blocks (7.6 g each)
+BLOCK_MASS = 0.0075  # kg per block (estimated: a polyamide housing with a small metal clamp and two screws)
+RAIL_MASS = 0.10 + ROW_BLOCKS * BLOCK_MASS  # kg: 24 cm of 1 mm steel TS35 rail plus the mounted blocks
 
-# -- the mounted terminal block (beige, WDU 2.5 outline; copied from terminal-block-mount) ---------------------
-# Section coordinates (across, up) in mm in the drawing frame: across 0..60, up from the bottom of the feet. The
-# rail's centreline is at across 32, the lip tops at up 6.76 when seated.
-_ACROSS0, _UP0 = 32.0, 6.76
-_HOUSING_OUTLINE = (
-    (16.4, 6.76), (47.5, 6.76), (47.5, 11.9), (49.0, 11.9), (49.4, 7.4), (56.8, 7.4), (57.9, 11.2), (59.9, 11.8),
-    (59.3, 12.9), (59.9, 14.8), (57.2, 17.8), (47.5, 22.4), (47.5, 26.3), (55.5, 31.8), (58.0, 36.2), (56.7, 37.1),
-    (55.2, 35.8), (54.1, 37.3), (55.4, 38.4), (54.5, 39.3), (53.0, 38.0), (51.9, 39.0), (53.2, 40.5), (52.4, 41.4),
-    (51.2, 40.2), (49.7, 41.2), (51.0, 42.8), (50.1, 43.7), (48.6, 42.3), (47.5, 43.4), (48.8, 44.9), (48.5, 46.2),
-    (45.5, 46.2), (45.5, 38.7), (41.5, 38.7), (41.5, 46.2), (40.2, 45.7), (40.0, 37.7), (36.4, 34.1), (36.4, 27.8),
-    (27.6, 27.8), (27.6, 34.1), (24.0, 37.7), (23.8, 45.7), (22.5, 46.2), (22.5, 38.7), (18.5, 38.7), (18.5, 46.2),
-    (15.8, 46.2), (15.2, 44.9), (16.5, 43.4), (15.0, 42.3), (13.8, 43.6), (13.0, 42.7), (14.3, 41.2), (13.2, 40.2),
-    (11.6, 41.4), (10.8, 40.6), (12.1, 39.0), (10.6, 38.0), (9.4, 39.2), (8.6, 38.4), (9.9, 36.8), (8.8, 35.8),
-    (7.3, 37.1), (6.0, 36.3), (8.5, 31.8), (16.5, 26.3), (16.5, 22.4), (6.8, 17.8), (4.1, 14.7), (4.8, 12.9),
-    (0.6, 12.9), (0.0, 12.0), (3.8, 10.8), (4.8, 7.4), (14.6, 7.4), (14.5, 11.5), (15.5, 11.9),
+# -- the mounted terminal block (beige; our own simplified design of a generic 2.5 mm2 screw-clamp feed-through
+# block: two wire entries, two screws in wells on top, a marker groove between them) -------------------------------
+# Section coordinates (across, up) in mm in the drawing frame: across 0..52 (the rail's centreline at 26), up from the
+# block's base, which rests BLOCK_SEATED above the lip tops. Symmetric about the centreline.
+_BLOCK_ACROSS0 = 26.0
+_BLOCK_OUTLINE = (
+    (8.5, 0.0), (43.5, 0.0), (43.5, 5.0), (52.0, 8.0), (52.0, 15.0), (44.0, 19.0), (44.0, 25.0), (50.0, 30.0),
+    (50.0, 35.0), (45.0, 40.0), (40.0, 40.0), (40.0, 33.0), (36.0, 33.0), (36.0, 40.0), (30.0, 40.0), (30.0, 37.0),
+    (22.0, 37.0), (22.0, 40.0), (16.0, 40.0), (16.0, 33.0), (12.0, 33.0), (12.0, 40.0), (7.0, 40.0), (2.0, 35.0),
+    (2.0, 30.0), (8.0, 25.0), (8.0, 19.0), (0.0, 15.0), (0.0, 8.0), (8.5, 5.0),
 )
-_BLOCK_HULLS = (  # convex collision pieces of the housing
-    ((16.5, 6.76), (47.5, 6.76), (47.5, 26.3), (16.5, 26.3)),
-    ((0.0, 11.9), (16.4, 11.9), (16.4, 22.4), (6.8, 17.8), (0.6, 12.9)),
-    ((47.5, 11.9), (59.9, 11.9), (59.9, 14.8), (57.2, 17.8), (47.5, 22.4)),
-    ((8.5, 31.8), (16.5, 26.3), (16.5, 37.7), (7.4, 37.7), (6.0, 36.3)),
-    ((16.5, 26.3), (27.6, 26.3), (27.6, 34.1), (24.0, 37.7), (16.5, 37.7)),
-    ((7.4, 37.7), (18.5, 37.7), (18.5, 46.2), (15.8, 46.2)),
-    ((18.5, 37.7), (24.0, 37.7), (24.0, 38.7), (18.5, 38.7)),
-    ((22.5, 38.7), (24.0, 38.7), (24.0, 45.7), (22.5, 46.2)),
-    ((27.6, 26.3), (36.4, 26.3), (36.4, 27.8), (27.6, 27.8)),
-    ((55.5, 31.8), (58.0, 36.3), (56.6, 37.7), (47.5, 37.7), (47.5, 26.3)),
-    ((36.4, 26.3), (47.5, 26.3), (47.5, 37.7), (40.0, 37.7), (36.4, 34.1)),
-    ((45.5, 37.7), (56.6, 37.7), (48.2, 46.2), (45.5, 46.2)),
-    ((40.0, 37.7), (45.5, 37.7), (45.5, 38.7), (40.0, 38.7)),
-    ((40.0, 38.7), (41.5, 38.7), (41.5, 46.2), (40.2, 45.7)),
+_BLOCK_CORE = (  # convex collision pieces on the centreline (the rest: _BLOCK_HALF_HULLS and their mirror images)
+    ((8.5, 0.0), (43.5, 0.0), (43.5, 33.0), (8.5, 33.0)),  # core, under the screw wells
+    ((16.0, 33.0), (36.0, 33.0), (36.0, 37.0), (16.0, 37.0)),  # between the wells, under the marker groove
 )
-_BLOCK_SCREWS = (20.5, 43.5)
-_BLOCK_FEET = (  # the two feet below the base, looks only (the block is part of the rail body)
-    ((14.6, 7.4), (14.6, 0.3), (17.5, 0.3), (17.5, 6.76)),
-    ((47.5, 6.76), (47.5, 0.3), (50.4, 0.3), (50.4, 7.4)),
+_BLOCK_HALF_HULLS = (  # the +across side
+    ((43.5, 5.0), (52.0, 8.0), (52.0, 15.0), (44.0, 19.0), (43.5, 19.0)),  # lower wire-entry shoulder
+    ((40.0, 33.0), (43.5, 25.0), (44.0, 25.0), (50.0, 30.0), (50.0, 35.0), (45.0, 40.0), (40.0, 40.0)),  # upper
+    ((30.0, 37.0), (36.0, 37.0), (36.0, 40.0), (30.0, 40.0)),  # beside the marker groove
 )
-BLOCK_WIDTH = 5.1 * MM  # along the rail
+_BLOCK_SCREWS = (14.0, 38.0)  # across: the two clamping screws, in wells 4 mm wide ...
+_BLOCK_WELL_FLOOR = 33.0  # ... with this floor
+_BLOCK_FEET = (  # the two latch feet beside the lips, looks only (the block is part of the rail body)
+    ((5.2, -6.5), (8.5, -6.5), (8.5, 5.0), (5.2, 6.2)),
+    ((43.5, -6.5), (46.8, -6.5), (46.8, 6.2), (43.5, 5.0)),
+)
+BLOCK_WIDTH = 5.2 * MM  # along the rail
 BLOCK_SEATED = 0.3 * MM  # the mounted block's base above the lip tops
 # The row of beige blocks along the rail: the rightmost is centred on the rail's middle, the others to its left (+y).
 BEIGE_Y = (-BLOCK_WIDTH / 2, -BLOCK_WIDTH / 2 + ROW_BLOCKS * BLOCK_WIDTH)
 BEIGE_FACE_Y = BEIGE_Y[0]  # the row's free face, toward the rail's right end (-y): the bracket goes against it
 HOLD_Y = 70.0 * MM  # where the left arm holds the rail (left of the block, clear of the right hand's work)
 
-# -- end bracket: WEW 35/2 outline from the manufacturer's STEP ---------------------------------------------------
-# STEP frame: across 0..56.1, up 0..46.5 (feet at 0), 8.0 thick. Its seat (the underside that rests on the lip
-# tops) is at up 7.0, across 10.35..45.75; the rail's centreline is at across 28.05. Bracket frame: x = across -
-# 28.05, z = up - 7.0. Section at the face (simplified to 0.3 mm): the comb serrations for group markers, the screw
-# recess in the middle of the top and the straddling skirts underneath.
-_WEW_ACROSS0, _WEW_UP0 = 28.05, 7.0
-_WEW_OUTLINE = (
-    (23.05, 45.75), (23.05, 39.00), (33.05, 39.00), (33.37, 46.36), (44.30, 46.47), (44.81, 46.10), (44.42, 45.71),
-    (44.90, 45.19), (44.10, 44.32), (44.10, 43.13), (45.06, 42.60), (45.30, 43.42), (46.24, 43.89), (47.09, 42.98),
-    (45.76, 41.47), (47.25, 40.41), (47.49, 41.23), (48.43, 41.70), (49.28, 40.79), (47.96, 39.28), (49.44, 38.22),
-    (49.68, 39.04), (50.62, 39.51), (51.47, 38.60), (50.15, 37.08), (51.21, 36.02), (52.71, 37.34), (53.92, 36.97),
-    (53.98, 36.24), (52.23, 33.55), (51.12, 30.75), (50.57, 25.77), (51.05, 22.79), (52.11, 19.96), (56.03, 14.82),
-    (55.30, 13.90), (55.30, 13.15), (56.10, 12.46), (56.10, 0.00), (52.75, 0.00), (45.75, 7.00), (10.35, 7.00),
-    (3.35, 0.00), (0.00, 0.00), (0.00, 12.46), (0.80, 13.15), (0.80, 13.90), (0.07, 14.82), (3.99, 19.96),
-    (5.05, 22.79), (5.53, 25.77), (4.98, 30.75), (2.13, 36.89), (3.39, 37.34), (4.89, 36.02), (5.95, 37.51),
-    (5.13, 37.75), (4.66, 38.69), (5.57, 39.54), (7.08, 38.22), (8.14, 39.28), (6.85, 40.88), (7.76, 41.73),
-    (9.28, 40.41), (10.34, 41.47), (9.04, 43.07), (9.95, 43.92), (11.47, 42.60), (12.53, 43.66), (11.21, 45.16),
-    (11.70, 46.44), (14.20, 46.50), (14.55, 44.40), (19.05, 44.40), (19.40, 46.50), (22.45, 46.48),
+# -- end bracket: our own simplified design -------------------------------------------------------------------------
+# Drawing frame: across 0..56, up 0..46 (feet at 0), 8.0 thick, symmetric about the centreline at across 28. What
+# fixes it: the seat (the underside that rests on the lip tops) at up 7.0, across 10.3..45.7, 0.2 mm wider than the
+# TS35 lips each side; skirts straddling the lips down to 0.5 mm above the table, their inner faces chamfered so the
+# bracket can be set down over a lip; a 10 mm wide screw recess in the middle of the top for the M4 screw head, its
+# floor 32 mm above the seat. The rest (straight sides with a waist, chamfered top corners) is plain styling.
+# Bracket frame: x = across - 28, z = up - 7.0.
+_BR_ACROSS0, _BR_UP0 = 28.0, 7.0
+_BRACKET_OUTLINE = (
+    (0.0, 0.0), (4.0, 0.0), (10.3, 7.0), (45.7, 7.0), (52.0, 0.0), (56.0, 0.0), (56.0, 15.0), (51.0, 20.0),
+    (51.0, 33.0), (54.0, 36.0), (54.0, 40.0), (48.0, 46.0), (33.0, 46.0), (33.0, 39.0), (23.0, 39.0), (23.0, 46.0),
+    (8.0, 46.0), (2.0, 40.0), (2.0, 36.0), (5.0, 33.0), (5.0, 20.0), (0.0, 15.0),
 )
-# Pockets on both faces (marker / test-plug holders), looks only.
-_WEW_POCKETS = (
-    ((9.90, 35.75), (11.95, 35.75), (11.95, 38.80), (18.15, 38.80), (18.15, 35.75), (19.40, 35.75), (19.40, 34.20),
-     (20.20, 34.20), (20.20, 32.50), (9.90, 32.50)),
-    ((49.20, 23.25), (49.20, 20.00), (38.90, 20.00), (38.90, 23.25), (40.95, 23.25), (40.95, 26.30), (47.15, 26.30),
-     (47.15, 23.25)),
-)
-# Collision: convex pieces covering the left half (mirrored for the right). The side arcs are replaced by chords
-# (up to ~0.6 mm proud of the arc), the comb serrations and the marker notch are filled. Every piece is at least
-# 1 mm thick so PhysX does not inflate it.
-_WEW_HALF_HULLS = (
-    ((0.00, 0.00), (3.35, 0.00), (10.35, 7.00), (10.35, 12.46), (0.00, 12.46)),  # skirt
-    ((0.00, 12.46), (10.35, 12.46), (10.35, 19.96), (3.99, 19.96), (0.07, 14.82)),  # lower wing
-    ((3.99, 19.96), (10.35, 19.96), (10.35, 25.77), (5.53, 25.77)),  # arc, lower half
-    ((5.53, 25.77), (10.35, 25.77), (10.35, 30.75), (4.98, 30.75)),  # arc, upper half
-    ((4.98, 30.75), (10.35, 30.75), (10.35, 36.24), (2.12, 36.24)),  # upper wing
-    ((2.12, 36.24), (23.05, 36.24), (23.05, 46.50), (11.70, 46.44)),  # shoulder with the comb, up to the recess
-    ((10.35, 7.00), (28.05, 7.00), (28.05, 36.24), (10.35, 36.24)),  # body, to the centreline
-    ((23.05, 36.24), (28.05, 36.24), (28.05, 39.00), (23.05, 39.00)),  # recess floor
+# Collision: convex pieces covering the left half (mirrored for the right). Every piece is at least 1 mm thick so
+# PhysX does not inflate it.
+_BR_HALF_HULLS = (
+    ((0.0, 0.0), (4.0, 0.0), (10.3, 7.0), (10.3, 15.0), (0.0, 15.0)),  # skirt
+    ((0.0, 15.0), (10.3, 15.0), (10.3, 20.0), (5.0, 20.0)),  # lower shoulder
+    ((5.0, 20.0), (10.3, 20.0), (10.3, 33.0), (5.0, 33.0)),  # waist
+    ((5.0, 33.0), (10.3, 33.0), (10.3, 36.0), (2.0, 36.0)),  # upper shoulder
+    ((2.0, 36.0), (23.0, 36.0), (23.0, 46.0), (8.0, 46.0), (2.0, 40.0)),  # top corner, up to the recess
+    ((10.3, 7.0), (28.0, 7.0), (28.0, 36.0), (10.3, 36.0)),  # body, to the centreline
+    ((23.0, 36.0), (28.0, 36.0), (28.0, 39.0), (23.0, 39.0)),  # recess floor
 )
 BRACKET_WIDTH = 8.0 * MM  # along the rail
-BRACKET_SEAT_HALF = (45.75 - 10.35) / 2 * MM  # the seat's half width (17.7): 0.2 mm wider than the lips each side
-BRACKET_MASS = 0.01392  # kg, data sheet (all four bodies together)
+BRACKET_SEAT_HALF = (45.7 - 10.3) / 2 * MM  # the seat's half width (17.7): 0.2 mm wider than the lips each side
+BRACKET_MASS = 0.014  # kg, all four bodies together (estimated: a cored polyamide moulding of this size with a steel
+# jaw and screw; solid it would be about 18 g)
 RECESS_HALF = 5.0 * MM  # screw recess: 10 wide across, open on both faces, floor at z 32.0
-RECESS_FLOOR = (39.0 - _WEW_UP0) * MM
+RECESS_FLOOR = (39.0 - _BR_UP0) * MM
 
 # -- end bracket: the assumed mechanism ------------------------------------------------------------------------
 # Hook (on the body, -x side): its top HOOK_PLAY below the lip's underside, its tip 1.5 inside the lip edge.
@@ -166,6 +142,8 @@ SLOT_WIDTH = 1.2 * MM
 SLOT_DEPTH = 1.1 * MM
 SCREW_PITCH = 0.7 * MM  # M4 coarse thread, mm per turn
 SLOT_CHAMFER = 0.3 * MM  # the slot's top edges chamfered 45 degrees (simulation: see bracket_shapes)
+CAP_X, CAP_Y = 3.0 * MM, 2.3 * MM  # the head's chamfered top cap either side of the slot: half its length along the
+# slot and its reach across it (corners at 3.78 mm from the axis; see bracket_shapes)
 # Wedge: the jaw moves inward and up along a line JAW_ANGLE above the horizontal, JAW_LEAD per screw turn.
 JAW_ANGLE = math.radians(20.0)
 JAW_LEAD = 1.3 * MM  # along its line, per turn: 1.22 inward, 0.44 up
@@ -176,7 +154,8 @@ TURNS_TO_CONTACT = JAW_GAP / math.sin(JAW_ANGLE) / JAW_LEAD  # 1.35: the jaw tou
 # The jaw's spring (housing and wedge compliance) and the screw's friction. Tuned on the bench: see README.
 JAW_SPRING = 1.0e5  # N/m along the jaw's line
 JAW_SPRING_TRAVEL = 1.5 * MM
-REAL_TIGHT_TORQUE = 0.5  # Nm: the data sheet's minimum tightening torque (what a real trial checks)
+REAL_TIGHT_TORQUE = 0.5  # Nm: the bracket's rated tightening torque (what a real trial checks; usual for an M4
+# clamping screw in a plastic end bracket)
 TIGHT_TURNS = 1.6  # "tight" in the simulation: the screw turned this far from backed out (0.25 turn past the jaw's
 # first contact at 1.37) ...
 TIGHT_CLAMP = 2.0  # N ... with the jaw pressing on the lip at least this hard. (The jaw's force itself isn't a usable
@@ -216,7 +195,7 @@ LOOKS = {  # sRGB, roughness, metallic
     "steel": ((0.72, 0.74, 0.76), 0.35, 0.8),
     "zinc": ((0.80, 0.80, 0.78), 0.3, 0.9),
     "beige": ((0.86, 0.80, 0.66), 0.5, 0.0),
-    "bracket": ((0.70, 0.62, 0.46), 0.5, 0.0),  # Wemid dark beige
+    "bracket": ((0.70, 0.62, 0.46), 0.5, 0.0),  # dark beige polyamide
     "hole": ((0.03, 0.03, 0.035), 0.9, 0.0),
     "handle": ((0.85, 0.12, 0.10), 0.6, 0.0),
     "black": ((0.08, 0.08, 0.09), 0.7, 0.0),
@@ -300,29 +279,32 @@ def _ngon(r: float, n: int, start: float = 0.0, cx: float = 0.0, cy: float = 0.0
             for i in range(k)]
 
 
-def _wdu(pts, flip=False):
-    """WDU drawing (across, up) mm to the block frame (x, z) m (origin on the lip-top plane when seated)."""
-    out = [(((a - _ACROSS0) * (-1 if flip else 1)) * MM, (u - _UP0) * MM) for a, u in pts]
-    return out[::-1] if flip else out
+def _blk(pts, mirror=False):
+    """Block drawing (across, up) mm to the block frame (x, z) m (origin on its base, on the rail's centreline);
+    ``mirror`` reflects across the centreline."""
+    out = [(((a - _BLOCK_ACROSS0) * (-1 if mirror else 1)) * MM, u * MM) for a, u in pts]
+    return out[::-1] if mirror else out
 
 
-def _wew(pts, mirror=False):
-    """WEW drawing (across, up) mm to the bracket frame (x, z) m; ``mirror`` reflects across the centreline."""
-    out = [(((a - _WEW_ACROSS0) * (-1 if mirror else 1)) * MM, (u - _WEW_UP0) * MM) for a, u in pts]
+def _br(pts, mirror=False):
+    """Bracket drawing (across, up) mm to the bracket frame (x, z) m; ``mirror`` reflects across the centreline."""
+    out = [(((a - _BR_ACROSS0) * (-1 if mirror else 1)) * MM, (u - _BR_UP0) * MM) for a, u in pts]
     return out[::-1] if mirror else out
 
 
 def beige_block_shapes(body: str, y: float, dz: float) -> list[Shape]:
-    """The mounted beige WDU 2.5-style block centred at ``y`` along the rail, ``dz`` = its seat height in the
-    body frame. The housing collides; screws and feet are looks."""
+    """One mounted beige block centred at ``y`` along the rail, ``dz`` = its base's height in the body frame. The
+    housing collides; screws and feet are looks."""
     w = BLOCK_WIDTH / 2
-    out = [_prism(body, "beige", None, _wdu(_HOUSING_OUTLINE), y - w, y + w)]
-    out += [_prism(body, "beige", "polyamide", _wdu(h), y - w, y + w, visible=False) for h in _BLOCK_HULLS]
+    out = [_prism(body, "beige", None, _blk(_BLOCK_OUTLINE), y - w, y + w)]
+    hulls = [_blk(h) for h in _BLOCK_CORE] + [_blk(h, m) for h in _BLOCK_HALF_HULLS for m in (False, True)]
+    out += [_prism(body, "beige", "polyamide", h, y - w, y + w, visible=False) for h in hulls]
     for foot in _BLOCK_FEET:
-        out.append(_prism(body, "beige", None, _wdu(foot), y - w + 0.15 * MM, y + w - 0.15 * MM))
+        out.append(_prism(body, "beige", None, _blk(foot), y - w + 0.15 * MM, y + w - 0.15 * MM))
     for a in _BLOCK_SCREWS:
-        x = (a - _ACROSS0) * MM
-        out.append(Shape(body, "zinc", None, (x, y, (38.7 - _UP0 + 1.0) * MM), radius=1.9 * MM, length=2.0 * MM))
+        x = (a - _BLOCK_ACROSS0) * MM
+        out.append(Shape(body, "zinc", None, (x, y, (_BLOCK_WELL_FLOOR + 1.0) * MM), radius=1.9 * MM,
+                         length=2.0 * MM))
     return [sh.moved(dz=dz) for sh in out]
 
 
@@ -344,7 +326,7 @@ def _hook_profile():
     lip_under = -LIP_THICK / MM
     top = lip_under - HOOK_PLAY / MM
     tip = -(LIP_EDGE - HOOK_REACH) / MM
-    root = -20.5  # inside the skirt's inner chamfer
+    root = -22.5  # inside the skirt's inner chamfer
     return [(p[0] * MM, p[1] * MM) for p in ((root, top - 2.2), (tip - 1.0, top - 2.2), (tip, top - 1.2), (tip, top),
                                              (root, top))]
 
@@ -354,20 +336,17 @@ def _jaw_profile():
     lip_under = -LIP_THICK / MM
     top = lip_under - JAW_GAP / MM
     tip = (LIP_EDGE + JAW_CLEAR) / MM
-    back = 19.6  # clear of the skirt's inner chamfer (x 20.3 at the jaw's top), which it moves away from
+    back = 19.6  # clear of the skirt's inner chamfer (x 20.0 at the jaw's top), which it moves away from
     return [(p[0] * MM, p[1] * MM) for p in ((tip, top - 0.8), (tip + 0.8, top - 2.2), (back, top - 2.2),
                                              (back, top), (tip, top))]
 
 
 def bracket_shapes() -> list[Shape]:
     w = BRACKET_WIDTH / 2
-    out = [_prism("body", "bracket", None, _wew(_WEW_OUTLINE), -w, w)]
-    for pocket in _WEW_POCKETS:  # dark recesses a little proud of both faces
-        for y0, y1 in ((-w - 0.05 * MM, -w + 0.3 * MM), (w - 0.3 * MM, w + 0.05 * MM)):
-            out.append(_prism("body", "hole", None, _wew(pocket), y0, y1))
+    out = [_prism("body", "bracket", None, _br(_BRACKET_OUTLINE), -w, w)]
     for mirror in (False, True):
-        out += [_prism("body", "bracket", "polyamide", _wew(h, mirror), -w, w, visible=False)
-                for h in _WEW_HALF_HULLS]
+        out += [_prism("body", "bracket", "polyamide", _br(h, mirror), -w, w, visible=False)
+                for h in _BR_HALF_HULLS]
     # guide faces inside each skirt, 0.2 mm outside the lip edges (the seat is 0.2 wider than the lips each side) and
     # reaching just below the lips: they keep the bracket square on the rail. Without them a twist pushes the
     # skirts' 45 degree chamfers against the lips' top corners and the light bracket climbs them.
@@ -386,16 +365,17 @@ def bracket_shapes() -> list[Shape]:
         a0, a1 = (0.0, math.pi) if s > 0 else (math.pi, 2 * math.pi)
         half = [p for p in _ngon(SCREW_HEAD_R, 8, a0=a0, a1=a1) if s * p[1] >= -1e-12]
         half = [(x, s * max(abs(y), SLOT_WIDTH / 2)) for x, y in half]
-        # the round half-head is the look; it collides as a block across the slot whose slot edge is chamfered
-        # SLOT_CHAMFER at 45 degrees (a slot's edges are rounded off on a real screw; it lets a blade within
-        # +-0.5 mm drop in, for PhysX's ~0.3 mm contact error)
+        # the round half-head is the look. It collides as the same half-disc up to SLOT_CHAMFER below the top, and
+        # above that as a thin cap whose slot edge is chamfered 45 degrees (a slot's edges are rounded off on a real
+        # screw; it lets a blade within +-0.5 mm drop in, for PhysX's ~0.3 mm contact error). Everything stays within
+        # the head's 3.5 mm radius but the cap's corners (CAP_X, CAP_Y: 3.78 mm), inside the bracket's 4.0 mm
+        # half-thickness, so the turning head never touches the neighbouring terminal block
         out.append(_prism("screw", "zinc", None, half, zs, z1, plane="xy"))
         w, c = SLOT_WIDTH / 2, SLOT_CHAMFER
-        edge = ([(w, zs), (SCREW_HEAD_R, zs), (SCREW_HEAD_R, z1), (w + c, z1), (w, z1 - c)] if c > 0 else
-                [(w, zs), (SCREW_HEAD_R, zs), (SCREW_HEAD_R, z1), (w, z1)])
-        edge = [(s * y, z) for y, z in edge]
-        out.append(_prism("screw", "zinc", "screw", edge, -0.86 * SCREW_HEAD_R, 0.86 * SCREW_HEAD_R, plane="yz",
-                          visible=False))
+        out.append(_prism("screw", "zinc", "screw", half, zs, z1 - c, plane="xy", visible=False))
+        cap = [(w, z1 - c), (CAP_Y, z1 - c), (CAP_Y, z1), (w + c, z1)]
+        cap = [(s * y, z) for y, z in cap]
+        out.append(_prism("screw", "zinc", "screw", cap, -CAP_X, CAP_X, plane="yz", visible=False))
     out.append(Shape("screw", "zinc", None, (0.0, 0.0, (RECESS_FLOOR - 12 * MM)), radius=2.0 * MM, length=24 * MM))
     return out
 

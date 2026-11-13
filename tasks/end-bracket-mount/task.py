@@ -1,10 +1,10 @@
 """On the station table, in front of the arms: a loose steel TS35 x 7.5 top-hat DIN rail, 24 cm long, lying flat
 (open side up) and running left to right. A row of four beige terminal blocks is mounted on it, side by side,
 the rightmost in the middle of the rail (a terminal strip, not yet closed off by an end bracket). The rail is
-loose and light (110 g): pushed, pressed or twisted without being held, it slides and turns.
+loose and light (130 g with its blocks): pushed, pressed or twisted without being held, it slides and turns.
 
 In front of the right arm, on the table: a dark beige plastic end bracket for the rail (8 mm thick, 56 mm wide,
-46.5 mm tall, 14 g) standing on its two feet, its faces to the left and right, and a flat-blade screwdriver
+46 mm tall, 14 g) standing on its two feet, its faces to the left and right, and a flat-blade screwdriver
 (a stubby: 0.8 x 4.0 mm blade, 25 mm shaft, red 26 mm handle, 85 mm long) lying with its tip toward the arms.
 
 The end bracket is screw-fixed, not snap-on. Underneath it has a fixed hook on one side and a clamping jaw on the
@@ -71,7 +71,7 @@ FLUSH_GAP = 0.5 * MM  # gap to the beige block at each of the four check points 
 FLUSH_POINTS = ((15 * MM, 0.5 * MM), (15 * MM, 38 * MM), (-15 * MM, 0.5 * MM), (-15 * MM, 38 * MM))
 TIGHT_TURNS = ep.TIGHT_TURNS  # the screw turned at least this far from backed out (0.25 turn past the jaw's contact)
 TIGHT_CLAMP = ep.TIGHT_CLAMP  # N: ... with the jaw pressing on the lip. The simulation's stand-in for a screw tightened
-# to the data sheet's 0.5 Nm; a real trial checks with a torque screwdriver set to 0.5 Nm
+# to the rated 0.5 Nm; a real trial checks with a torque screwdriver set to 0.5 Nm
 CREDIT = {"lifted": 0.25, "seated": 0.5, "flush": 0.75}
 RAIL_MOVED_CAP = CREDIT["lifted"]
 

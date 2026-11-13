@@ -74,7 +74,7 @@ DRIVER_TIP_CLEAR = 8.0 * MM  # pad tips this far below the handle's axis when pi
 
 # -- the bracket: slide-on from the rail's free right end ---------------------------------------------------------
 # Tilting it on about its hook doesn't fit this geometry in rigid-body physics (at a small tilt the far guide catches
-# the lip, at a larger one the CAD's skirts, 0.5 mm above the table, dig into it); a real one flexes. Sliding on from
+# the lip, at a larger one its skirts, 0.5 mm above the table, dig into it); a real one flexes. Sliding on from
 # the free end is the other way an electrician fits one. Level, it fits with 0.4 mm above and under the lip
 # (ENTRY_LIFT, the hook's play is 0.8) and 0.2 mm beside each guide.
 ENTRY_OUT = 6 * MM  # lined up this far beyond the rail's end ...
