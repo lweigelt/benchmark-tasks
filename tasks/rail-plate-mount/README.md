@@ -25,8 +25,8 @@ score as the ladder says. Dream-1 (one trial through `inspect-robots run`, the c
 | `rp_parts.py` | the custom parts (plate, rail, screws with their thread mechanism, screw holder, screwdriver): geometry, USD writer, and the hook that lets yam_arena spawn them |
 | `demo.py` | scripted two-arm demo, closed loop on the simulated object poses, and its variants |
 | `rp_bench.py` | test bench for the thread mechanism alone (the table under *Thread bench*) |
-| `runs/dream1/` | the Dream-1 run: `model_run.mp4` (the three cameras in one video), one video per camera, `eval_log.json` (the inspect-robots log) |
-| `runs/full_video/` | the full demo run: `demo.mp4` (the three cameras in one video), one video per camera, `setup.png` (the starting layout), `result.json` |
+| `runs/dream1/` | the Dream-1 run: `eval_log.json.gz` (the inspect-robots log, gzipped); its video is the task's uploaded model-run video |
+| `runs/full_video/` | the full demo run: `result.json`, `setup.png` (the starting layout); its video (the three cameras in one) is the task's uploaded demo video |
 | `task.json` | submission metadata |
 
 ## Run and score a trial
@@ -185,7 +185,8 @@ Variants proving the ladder (CPU PhysX, each variant run from a fresh start):
 One trial with the command under *Run and score a trial* (`--policy dream`, CPU PhysX, cameras 320 x 176,
 13,000 steps, 871 s): **task_score 0.0** (hit the step limit). Both arms reach again and again over the screw holder
 and the plate, and touch the rail, but pick up neither a screw nor the screwdriver; the rail stays roughly where it
-started, and the screws and the screwdriver stay in the holder. Videos and log in `runs/dream1/`.
+started, and the screws and the screwdriver stay in the holder. Log in `runs/dream1/`; the video is the task's
+uploaded model-run video.
 
 ## Fidelity: what is simplified
 
