@@ -1,0 +1,23 @@
+{
+  "title": "Line up a lifting eyebolt with the chain's pull and hook on",
+  "category": "Safety and alignment",
+  "keywords": [
+    "bimanual",
+    "rigging",
+    "eyebolt",
+    "alignment",
+    "latch hook",
+    "screwing",
+    "lifting safety",
+    "sequencing"
+  ],
+  "instruction": "Fit the lifting eyebolt into the part for a lift: screw it into the tapped hole down to its shoulder, keep tightening until its eye is in line with the chain (never back it off), then hook the chain's hook into the eye and let go.",
+  "context": "A shouldered lifting eyebolt may only be loaded in the plane of its eye: pulled from the side its capacity drops sharply (DIN 580, ASME B18.15). Before the hook goes on, the eye has to point along the sling, reached by tightening past the shoulder, not by backing off.",
+  "setup": "All positions from the arm bases' midline (x forward, y left). Fixed: a machine part (gearbox housing simplified to a painted cast-iron block, 160 x 120 x 40 mm) centred 0.30 m forward, 0.02 m right, with a tapped M16 hole (90 degree countersink to 17 mm) in the middle of its top; an overhead steel bracket (40 x 40 mm post 0.52 m forward, 0.16 m right, on a 120 x 120 mm foot; arm reaching back over the table) whose chain anchor is 0.30 m forward, 0.16 m right and 0.55 m above the table, 14 cm right of the hole. From the anchor hangs a lifting chain of 16 links of 30 mm (4 mm steel, 10 g each) ending in a steel hook (0.12 kg, 8 mm section, 22 mm throat) with an inward-opening spring safety latch, hanging just above the table. Loose: a steel tray 60 x 60 x 32 mm (0.35 kg, 17 mm hole) centred 0.22 m forward, 0.17 m left, with an M16 lifting eyebolt (forged steel, DIN 580 proportions: eye 63 mm outside, 35 mm inside, 14 mm section; collar 35 x 8 mm; thread 27 mm, 2 mm pitch; 0.28 kg) standing in it thread down, its eye's plane pointing left-right. The eyebolt catches its thread when upright in the hole and turned clockwise; about 12.5 turns bring its collar onto the part, where the eye stops 75 degrees short of the chain's direction; tightening further brings it in line.",
+  "scoring": "1.0 = let go: hooked (below) and no robot finger within 15 mm of the hook (success: also the hook still for 1 s). 0.75 = hooked: seated and in line (below), and the hook through the eye with its latch closed. 0.5 = in line: seated (below), and the eye's plane within 15 degrees of the chain's direction (hole to anchor) seen from above. 0.25 = seated: the eyebolt screwed in to its shoulder, the collar's underside within 0.5 mm of the part's face and pressing on it (a 0.5 mm feeler gauge doesn't go under). 0 otherwise, and always 0 if the hook is in the eye while the eyebolt is not seated or not in line (the load would come on it loose or from the side).",
+  "run_limit": "7,000 steps (5 min 50 s at 20 Hz)",
+  "reset_notes": "Unhook the hook and let it hang still; unscrew the eyebolt and stand it back in the tray, thread down, eye pointing across the arms (as in the setup image).",
+  "fidelity": "CPU PhysX 240 Hz (-E device=cpu). Own simplified parts, no third-party CAD (eyebolt after DIN 580 M16 proportions). Thread: an upright eyebolt turned 20 deg clockwise in the hole is swapped for a jointed twin (2 mm/turn, fixed start: the eye stops 75 deg short at the shoulder; clamp spring 100 N/mm); no cross-threading, tightness by clamp not torque. Chain links don't collide (hook and latch do). Hook section 8 mm.",
+  "scores": "Dream-1 run: 0.0; scripted demo: 1.0 (success at step 4,633); hooked but not let go: 0.75; seated and in line, not hooked: 0.5; seated only: 0.25",
+  "media": "M-KBVNWM"
+}
