@@ -1,0 +1,23 @@
+{
+  "title": "Fit a cable through a cable gland and tighten it snug",
+  "category": "Impact on jobs",
+  "keywords": [
+    "bimanual",
+    "cable gland",
+    "cable insertion",
+    "deformable cable",
+    "tightening",
+    "torque judgment",
+    "electrical enclosure",
+    "control cabinet"
+  ],
+  "instruction": "Fit the cable through the cable gland into the box until its sheath reaches at least 5 mm past the gland's inner end, then tighten the cap nut snug, between the marks, neither short of them nor past them. Then let go of both.",
+  "context": "Electricians fit a cable gland wherever a cable enters an enclosure: tightened right, it seals the box against water and dust and anchors the cable; too loose it lets the cable pull out, too tight it crushes the sheath.",
+  "setup": "All positions from the arm bases' midline (x forward, y left). Fixed on the table: a grey polycarbonate enclosure, 120 mm deep x 160 mm wide x 60 mm tall, 3 mm walls, lid off, its near wall's outer face at x 0.27 m, centred on the midline. In the middle of the near wall, its axis along x and 35 mm above the table: an M20 x 1.5 black-grey polyamide cable gland (22 mm hex flange outside, 24 mm locknut inside, rubber seal insert open to 13 mm, domed cap nut 24 mm across flats with a 13 mm mouth); the cap nut starts loose. On the table: a round control cable, 3 cores x 1.5 mm2, grey PVC sheath 8 mm across (~100 g/m), 420 mm of sheath from a fixed black plastic cable clamp (24 x 22 x 18 mm) at x 0.10 m, y -0.24 m (cable leaving it 30 degrees left of x), then its prepared end: sheath stripped back 75 mm, the three cores (brown, blue, green-yellow) taped together. The cable lies in an arc, its sheath's cut end at x 0.16 m, y 0.08 m, the cores pointing toward the box (tip ~4 cm in front of the wall, ~4 cm left of the gland's axis). The cap nut tightens clockwise as seen from the arms; about 2 turns bring the seal onto the cable.",
+  "scoring": "Sheath past = the cable runs through the gland and its sheath's cut end is at least 5 mm past the gland's inner end inside the box (measured before the pull test). First contact = the seal grips the cable all round (hand-tight); the nut's turns since are read on marks at 0.4, 1.0 and 1.3 turns. Pull test = with both hands off for 1 s, the cable is pulled outward with 30 N (ramped over 1 s, held 0.5 s); it holds if the sheath moves less than 2 mm. Score: 1.0 (success, ends the run) = sheath past, holds, nut between 0.4 and 1.0 turn past first contact, cable and nut still for 1 s; 0.75 = sheath past, holds, nut 1.0 turn or more past (over-tightened); 0.5 = sheath past, holds, nut short of 0.4 turn; 0.25 = sheath past only; 0 = otherwise, or the sheath crushed: the nut ever turned 1.3 turns or more past first contact (even if loosened again).",
+  "run_limit": "6,000 steps (5 minutes at 20 Hz)",
+  "reset_notes": "Unscrew the cap nut to its start (seal open, about 2 turns before it touches the cable), pull the cable out and lay it back in its arc as in the screenshot. A crushed sheath must be replaced (cut and strip a fresh end).",
+  "fidelity": "CPU PhysX 240 Hz (-E device=cpu). Own simplified parts, no third-party CAD (thread M20 x 1.5 per ISO 261). Cap nut on a jointed thread (1.5 mm/turn, 0.08 Nm friction); seal = 6 rubber pads pushed in by the nut's travel on 80 N/mm springs, grip from contact friction. Cable = chain of 20 mm links with bending/torsion springs and a creeping set. Crushed = 1.3 turns past contact (no sheath damage model). Pull test applied by the task.",
+  "scores": "Dream-1 run: 0.0; scripted demo: 1.0 (success at step 2,671); over-tightened: 0.75; holds but short of the marks: 0.5; pushed through, not tightened: 0.25; crushed: 0.0",
+  "media": "M-8C79NT"
+}
