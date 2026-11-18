@@ -1,4 +1,4 @@
-# Pin a crimped contact into cavity 3 until the locking fingers click, prove it with a tug, then press in the secondary lock
+# Pin a crimped contact into cavity 3 until the locking fingers click, prove it with a tug, then fit the secondary lock
 
 In wire-harness assembly, crimped wires are pinned into connector housings by hand, cavity by cavity, following a
 pinout. A contact goes into its cavity from the wire side until its locking fingers snap in behind the contact's
