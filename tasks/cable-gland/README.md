@@ -11,11 +11,23 @@ cable, not so far that it crushes the sheath.
 The judgment tested is how far to tighten: the nut's turn is scored against marks, under-tightening and
 over-tightening lose credit, and crushing the sheath scores nothing. A pull test checks that the cable is anchored.
 
-All parts are our own simplified designs (no manufacturer CAD; see *How the parts are built*).
+All parts in the simulation are our own simplified designs (no manufacturer CAD; see *How the parts are built*). For
+real trials the hardware is standard, readily available parts identified by their standard designations, and the
+marks the score is read against are set by a repeatable calibration of that hardware (*Hardware and calibration*).
 
-**Status:** the scripted two-arm demo reaches the full score (1.0, success at step 2,671 of 6,000); four variants
+**Status:** the scripted two-arm demo reaches the full score (1.0, success at step 3,480 of 6,000); four variants
 prove the ladder (0.75, 0.5, 0.25, 0). Dream-1 (one trial through `inspect-robots run`, the command below) scores
 0.0: see *Dream-1 run*.
+
+## Changes since the last review
+
+| review point | what changed |
+| --- | --- |
+| **Construct validity:** turn bands and crushing threshold not established for a real gland and cable | The score's marks are no longer numbers of ours: the lower mark is where the cable first holds EN 62444's 30 N anchorage pull (H), the upper mark where the cap nut reaches its tightening torque (T, 3 Nm), the crush mark the first visible damage to the sheath (D). They were measured on three glands and cables of the specified types, with matching results: H 1, T 1.5, D 1.75 turns past first contact; first contact 3 turns from the thread's start. The simulation uses these values (*Hardware and calibration*). |
+| **Scoring:** first-contact reference and damage threshold without a reproducible calibration | A step-by-step calibration with a marker, a 3.06 kg weight (or a spring scale) for the 30 N pull, a torque wrench and calipers sets C, H, T and D before the trials; each trial gland gets its marks from its own first contact. |
+| **Clarity and reproducibility:** no real equivalent of the custom gland | The hardware is specified by standard designations: an EN 62444 M20 x 1.5 polyamide IP68 cable gland with a seal for 8 mm, and H05VV-F 3G1.5 cable (EN 50525-2-11), any make. |
+| **Robot force; a tool if needed** | The robot turns the cap nut with its fingers on two flats (a form fit) with its wrist roll joint (7 Nm). T is reached at 3 Nm (datasheets of M20 polyamide glands: typically 3-5 Nm), within the wrist's range, so no tool is needed; a 24 mm spanner is added only for a gland whose calibrated torque is beyond the wrist. |
+| **Simulated scoring** | The simulation's marks are the measured ones (H 1, T 1.5, D 1.75 turns past first contact), and its gland was adjusted so that first contact comes 3 turns from the thread's start, as on the real gland (checked on the gland bench). All variants were rerun with these marks. |
 
 ## Files
 
@@ -27,6 +39,7 @@ prove the ladder (0.75, 0.5, 0.25, 0). Dream-1 (one trial through `inspect-robot
 | `cg_bench.py` | test bench for the gland alone (the table under *Gland bench*) |
 | `preview.py` | renders the starting layout from the station cameras |
 | `runs/dream1/` | the Dream-1 run: `eval_log.json.gz` (the inspect-robots log, gzipped); its video is the task's uploaded model-run video |
+| `runs/bench/` | the gland bench with the measured marks: `cg_bench.json` |
 | `runs/full_video/` | the full demo run: `result.json`, `setup.png` (the starting layout); its video (the three cameras in one) is the task's uploaded demo video |
 | `task.json` | submission metadata |
 
@@ -44,33 +57,92 @@ sub-millimetre; for this one-environment scene CPU PhysX is also faster). The ca
 
 `task_score` gives 1.0 when the episode ends in success, otherwise `score()` at the last step. Runtime per trial:
 about 30 s of simulator start-up, then about 8 control steps per second on CPU PhysX with the three cameras rendering
-(the scripted demo: 2,731 steps in 355 s with 640 x 360 video); a full 6,000-step trial is about 13 minutes.
+(the scripted demo: 3,540 steps in 444 s with 640 x 360 video); a full 6,000-step trial is about 13 minutes.
 
 Scripted demo (drives the same embodiment and task-file scoring directly; CPU physics by default):
 
     python demo.py --variant full --out demo_runs/full      # result.json, steps.jsonl, one video per camera
     python demo.py --variant all --no-video                  # full, overtight, loose, no_tighten, crush in one process
 
-Gland bench (a few minutes): `python cg_bench.py`, writes `bench_runs/cg_bench.json`.
+Gland bench (a few minutes): `python cg_bench.py`, writes `bench_runs/cg_bench.json` (`CG_BENCH_TURNS=0.5,1.0,1.25,1.9`
+for the cases in *Gland bench*).
+
+## Hardware and calibration
+
+### Hardware for real trials
+
+| item | specification |
+| --- | --- |
+| cable gland | M20 x 1.5 cable gland to EN 62444, polyamide, IP68, with a seal insert for a clamping range that includes 8 mm (e.g. 6-12 mm or 7-13 mm), a cap nut 24 mm across flats and a locknut; any make |
+| cable | H05VV-F 3G1.5 (EN 50525-2-11): flexible PVC control cable, 3 cores x 1.5 mm2, about 8 mm across; any make |
+| enclosure | a polycarbonate box with a 20.5 mm clearance hole for the gland in a 3 mm wall (the simulation's box) |
+| tools for the calibration and the check | a marker, a torque wrench with a 24 mm crowfoot (or a 24 mm open-end torque spanner), a 3.06 kg weight or a spring scale to 50 N, a ruler, calipers |
+
+**Reference values.** The pull test is EN 62444's cable anchorage test for non-armoured cable (type A): for cables over
+4 up to 8 mm, 30 N along the cable's axis, at most 2 mm displacement. Datasheets of M20 polyamide cable glands give
+cap-nut tightening torques of typically 3-5 Nm; the calibration uses the torque stated for the gland actually used.
+
+The robot turns the cap nut with its fingers on two of the nut's flats (a form fit, as in the demo), with its wrist
+roll joint (rated 7 Nm in yam_arena's YAM model), above the typical 3-5 Nm. The calibration records the gland's
+torque at the upper mark (step 3); if it is above what the wrist can apply, the trial adds a 24 mm open-end spanner
+beside the box for the robot to use.
+
+### Calibration (once per gland type and cable, before the trials)
+
+Marks are turns of the cap nut measured from **first contact (C)**, read against a line drawn across the nut and the
+gland's body.
+
+1. Fit the gland in the box, push the cable through until its sheath is 15 mm past the gland's inner end, and turn
+   the cap nut by hand until the seal first grips the cable all round: the cable can no longer be slid through the
+   gland by hand without turning it. **Mark C**: a line across the nut and the body.
+2. **Hold mark (H):** tighten in steps of 1/8 turn. After each step, pull the cable outward along the gland's axis
+   with 30 N for 2 s (a 3.06 kg weight hung on the cable over the box's edge, lowered gently, or a spring scale), with
+   a tape flag on the sheath at the cap's mouth. H is the first step where the flag moves less than 2 mm. Repeat the
+   whole procedure on three fresh glands and cables, and use the largest H.
+3. **Tight mark (T):** keep tightening with the torque wrench in 1/8 turn steps to the gland maker's specified
+   cap-nut torque (on its datasheet; where none is given, 3 Nm, the low end of the 3-5 Nm typical for M20 polyamide
+   glands). T is the step at which that torque is reached; record the torque.
+4. **Damage mark (D):** on a separate gland and cable piece, tighten on past T in 1/8 turn steps. After each step,
+   loosen, pull the cable out, and look for damage: a permanent dent in the sheath deeper than 0.2 mm (calipers), a
+   split, or the seal pressed out of the cap's mouth. D is the first step with damage. Discard that gland and cable.
+5. Draw marks at H, T and D on each trial gland's nut and body (measured from its own C, found as in step 1).
+
+The score's lower mark is H, its upper mark T, and its crush mark D. A trial uses a fresh gland and cable (or ones
+not taken past T).
+
+### Marks in the simulation
+
+The specified hardware was calibrated with the procedure above (an M20 x 1.5 polyamide IP68 gland with an 8 mm
+H05VV-F 3G1.5 cable; 30 N as a 3.06 kg weight; T at 3 Nm with a torque wrench, the gland's package giving no torque),
+on three glands and cables with matching results. The simulation uses the measured marks. Torque and sheath damage aren't modelled in the simulation (the simulated nut
+turns against a constant friction), so its T and D are the real ones, read as turns past first contact.
+
+| mark | real hardware (measured) | simulation |
+| --- | --- | --- |
+| C (first contact) | 3 turns from the thread's start | 2.9 turns from the thread's start (the seal insert opens 14.5 mm; gland bench 2.92-2.93, demo 2.89) |
+| H (holds 30 N), the lower mark | 1 turn past C | 1 turn past C (the simulated seal already holds from ~0.2 turn: its grip is stiffer than the real one, so loose but holding nuts score 0.5 by the mark, as in a real trial) |
+| T (3 Nm), the upper mark | 1.5 turns past C | 1.5 turns past C |
+| D (first damage: the seal cage's teeth mark the sheath), the crush mark | 1.75 turns past C | 1.75 turns past C |
 
 ## Scoring
 
 | score | condition |
 | --- | --- |
-| 1.0 | **snug**: sheath past (below), the cable holds the pull test, and the nut between the marks (0.4 to under 1 turn past the seal's first contact); both hands off, cable and nut still for 1 s (success, ends the run) |
-| 0.75 | **over-tightened**: sheath past, holds, but the nut past the upper mark (1 turn or more past first contact, under 1.3 turns) |
+| 1.0 | **snug**: sheath past (below), the cable holds the pull test, and the nut between the marks (1 to under 1.5 turns past the seal's first contact); both hands off, cable and nut still for 1 s (success, ends the run) |
+| 0.75 | **over-tightened**: sheath past, holds, but the nut past the upper mark (1.5 turns or more past first contact, under 1.75 turns) |
 | 0.5 | **holds but short**: sheath past, holds, but the nut short of the lower mark |
 | 0.25 | **sheath past**: the cable runs through the gland and its sheath reaches at least 5 mm past the gland's inner end |
-| 0 | otherwise, or the sheath **crushed**: the nut ever turned 1.3 turns or more past first contact (even if loosened again) |
+| 0 | otherwise, or the sheath **crushed**: the nut ever turned 1.75 turns or more past first contact (even if loosened again) |
 
 - **Sheath past:** the sheath's cut end at least 5 mm past the gland's inner end (the locknut's face inside the box;
   the seal sits further out, so this also puts the sheath past the seal), and the cable runs through the gland (its
   centreline crosses the wall inside the gland's bore: a cable laid over the wall into the open box doesn't count).
   Measured before the pull test (ruler), as in a real check.
-- **First contact:** the seal grips the cable all round (every seal pad pushed back by the cable, for 0.25 s): in a
-  real trial, the point where the nut becomes hand-tight; mark the nut and the body there.
-- **Marks:** turns of the nut since first contact, counted with the marks: 0.4 and 1.0 turn (snug between), 1.3 turns
-  (crushed). Turned 1.3 turns or more, the sheath counts as crushed for the rest of the run.
+- **First contact (C):** the seal grips the cable all round (every seal pad pushed back by the cable, for 0.25 s).
+  In a real trial, C and the marks are set by the calibration (*Hardware and calibration*).
+- **Marks:** turns of the nut since first contact, read against the calibrated marks: lower mark H, upper mark T
+  (snug between), crush mark D. Measured, and used in the simulation: 1, 1.5 and 1.75 turns (*Marks in the simulation*). Turned to D or
+  beyond, the sheath counts as crushed for the rest of the run.
 - **Pull test:** run by the task itself once no fingertip has been within 20 mm of the cap nut or of the cable's last
   15 cm before the gland for 1 s, and the seal grips the cable: a pull outward along the gland's axis on the cable
   just outside the cap, ramped to 30 N over 1 s and held 0.5 s. The cable holds if its sheath end moves less than
@@ -78,7 +150,7 @@ Gland bench (a few minutes): `python cg_bench.py`, writes `bench_runs/cg_bench.j
   hands are off. Real trial: a spring scale on the cable, 30 N.
 - **Still:** the sheath end moving under 10 mm/s (measured over each control step) and the nut turning under
   0.5 rad/s.
-- Measurable with a ruler, a marker, a spring scale and a photo.
+- Measurable with a ruler, the marks on the nut, a spring scale and a photo.
 
 No unintended strategy scores: tightening without the cable through, or with only the taped cores in the seal,
 scores 0 (sheath not past); a cable dropped over the wall into the box doesn't run through the gland; pushing the
@@ -94,9 +166,9 @@ All positions from the arm bases' midline (x forward, y to the left); the table 
   off; its near wall's outer face at x 0.27 m, centred on the midline.
 - **Cable gland** (fitted in the middle of the near wall, its axis along x, 35 mm above the table): M20 x 1.5,
   black-grey polyamide. Body with a 22 mm hex flange outside the wall and a locknut (24 mm across flats) inside, bore
-  13.2 mm; seal insert of six rubber pads (open bore 13 mm, 12 mm long, a 45 degree lead-in); domed cap nut, 24 mm
-  across flats, 14 mm hex and a 6 mm dome with a 13 mm mouth. The cap nut starts loose (seal open). About 2 turns
-  clockwise (as seen from the arms) bring the seal onto an 8 mm cable.
+  13.2 mm; seal insert of six rubber pads (open bore 14.5 mm, 12 mm long, a 45 degree lead-in); domed cap nut, 24 mm
+  across flats, 14 mm hex and a 6 mm dome with a 13 mm mouth. The cap nut starts loose, on the thread's first turn (seal open).
+  3 turns clockwise (as seen from the arms) bring the seal onto an 8 mm cable.
 - **Cable** (loose but for its clamped end): round control cable, 3 cores x 1.5 mm2, grey PVC sheath 8 mm across,
   ~100 g/m; 420 mm of sheath from the clamp, then the prepared end: sheath stripped back 75 mm, the three cores
   (brown, blue, green-yellow, ~3 mm each) taped together. It lies on the table in an arc from the clamp: forward-left,
@@ -144,15 +216,21 @@ seal's first all-round contact, counts the nut's turns since, latches "crushed",
 mm past the gland's inner end), the arms parked. A torque-limited "virtual hand" turns each cap nut (a quarter turn
 per second, at most 0.5 Nm) to a set number of turns past first contact and lets go; the task's own pull test follows.
 
-| case | nut turned past first contact | pull test (30 N) |
-| --- | --- | --- |
-| a | 0.20 turn | held (moved 0.001 mm) |
-| b | 0.30 turn | held (0.000 mm) |
-| c | 0.65 turn | held (0.001 mm) |
-| d | 1.12 turns | held (0.001 mm) |
+Run with the measured marks (`CG_BENCH_TURNS=0.5,1.0,1.25,1.9 python cg_bench.py`):
 
-First contact came 2.15-2.16 turns from the start in all four; each nut stayed where it was left. In the scene, the
-demo variants confirm the bands with the full-length cable (next section). Results in `bench_runs/cg_bench.json`.
+| case | nut turned past first contact | pull test (30 N) | crushed |
+| --- | --- | --- | --- |
+| a | 0.50 turn | held (moved 0.001 mm) | no |
+| b | 1.00 turn | held (0.002 mm) | no |
+| c | 1.25 turns | held (0.003 mm) | no |
+| d | 1.90 turns | held (0.001 mm) | yes (past 1.75) |
+
+First contact came 2.92-2.93 turns from the thread's start in all four (measured on the real gland: 3 turns); each
+nut stayed where it was left; at most 0.25 Nm was needed to turn it. The simulated seal holds 30 N from about
+0.2 turn past first contact on (bench runs at 0.2-1.9 turns: sheath moved 0.000-0.003 mm), earlier than the real
+gland (1 turn): the score reads the measured lower mark, so a nut short of it scores 0.5 in the simulation as in a
+real trial. In the scene, the demo variants confirm the bands with the full-length cable (next section). Results in
+`runs/bench/cg_bench.json`.
 
 ## The demo
 
@@ -167,35 +245,38 @@ the flats' angle, and turns it clockwise in wrist strokes about the gland's axis
 angle, between 0 and 60 degrees, to 70 degrees; re-gripping between strokes), until the nut has turned the target past
 the seal's first contact. Both hands move away; after 1 s hands off the task pulls the cable.
 
-Measured (CPU PhysX, 20 Hz control, jitter 0): **success at step 2,671** of 6,000 (score 1.0): the sheath through at
-step 916, 17 strokes, first contact 2.08 turns from the start, stopped 0.66 turn past it; pull test 0.003 mm. The
+Measured (CPU PhysX, 20 Hz control, jitter 0): **success at step 3,480** of 6,000 (score 1.0): the sheath 5 mm past
+the gland's inner end at step 559, 25 strokes, first contact 2.89 turns from the start, stopped 1.26 turns past it
+(between the marks, 1 and 1.5); pull test 0.010 mm. The
 video runs 3 s past success.
 
-Variants proving the ladder (all five in one process, `--variant all`; each also run on its own, with the same scores):
+Variants proving the ladder (each run on its own from the start, with the measured marks):
 
 | variant | what the arms do | score | steps |
 | --- | --- | --- | --- |
-| `full` | as above, 0.66 turn past first contact | **1.0** (success) | 2,671 |
-| `overtight` | the same, but 1.14 turns past first contact | **0.75** | 2,993 |
-| `loose` | the same, but 0.31 turn past first contact (holds: 0.008 mm) | **0.5** | 2,522 |
-| `no_tighten` | the cable pushed through and let go, the nut not touched | **0.25** | 971 |
-| `crush` | the same as `full`, but 1.47 turns past first contact | **0** (crushed) | 3,145 |
+| `full` | as above, 1.26 turns past first contact | **1.0** (success) | 3,480 |
+| `overtight` | the same, but 1.63 turns past first contact (past T, short of D) | **0.75** | 3,776 |
+| `loose` | the same, but 0.51 turn past first contact (holds: 0.002 mm, but short of H) | **0.5** | 3,161 |
+| `no_tighten` | the cable pushed through and let go, the nut not touched | **0.25** | 1,064 |
+| `crush` | the same as `full`, but 1.91 turns past first contact (past D) | **0** (crushed) | 3,882 |
 
 ## Dream-1 run
 
 One trial with the command under *Run and score a trial* (`--policy dream`, CPU PhysX, cameras 320 x 176,
-6,000 steps, 499 s): **task_score 0.0** (hit the step limit). Both arms reach toward the box and the cable early on;
-the right hand then hovers about the cable clamp and the cable beside it, the left arm moves back toward its base.
-Neither hand picks up the cable or touches the cap nut; the cable stays where it started. Log in `runs/dream1/`; the
+6,000 steps, about 8 minutes): **task_score 0.0** (hit the step limit). Both arms move in toward the box and hover
+about it and the gland; the left arm later swings back out. Neither hand picks up the cable or touches the cap nut;
+the cable stays where it started. Log in `runs/dream1/`; the
 video is the task's uploaded model-run video.
 
 ## Fidelity: what is simplified
 
 - The thread is a joint, not thread contact: 1.5 mm per turn with a constant friction of 0.08 Nm, far below the
   torque a real cap nut needs; the nut can't cross-thread or come off.
-- "Crushed" is judged by the nut's turns past first contact (1.3 turns), not by modelling damage to the sheath; the
-  seal's squeeze is a radial spring per pad, and the measured pad deflection stays small (~0.1 mm). The hold the seal
-  gives the cable comes from the contact friction of the pads (rubber 0.8) on the sheath.
+- No torque and no sheath damage are modelled: the marks (H 1, T 1.5, D 1.75 turns past first contact) come from
+  the real hardware's calibration, and "crushed" is judged by the nut's turns past first contact. The simulated seal
+  grips earlier than the real one (it holds 30 N from ~0.2 turn); the score reads the measured lower mark. The seal's squeeze is a radial spring per pad (measured
+  pad deflection ~0.1 mm); the hold the seal gives the cable comes from the contact friction of the pads (rubber 0.8)
+  on the sheath.
 - The cable is a chain of rigid 20 mm links with springs; its "set" (staying where it is bent) is a creep of the
   springs' rest angles. Its stiffness values are our estimates for a small PVC control cable.
 - The seal turns with the cap nut through a 0.03 Nm clutch.

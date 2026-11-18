@@ -40,6 +40,9 @@ MM = 1e-3
 GLAND_X = 0.30
 CASES = {"a_020": (-0.36, 0.2, False), "b_030": (-0.12, 0.3, False), "c_065": (0.12, 0.65, False),
          "d_112": (0.36, 1.12, False)}  # suffix: (y, turns past contact, cable held)
+if os.environ.get("CG_BENCH_TURNS"):  # the calibration: the nut turned to each of these (up to four), then pulled
+    _turns = [float(v) for v in os.environ["CG_BENCH_TURNS"].split(",")][:4]
+    CASES = {f"t_{round(t * 100):03d}": (y, t, False) for y, t in zip((-0.36, -0.12, 0.12, 0.36), _turns)}
 SHEATH_X0 = 20 * MM  # the sheath's end at the start (gland frame)
 
 OBJECTS = []

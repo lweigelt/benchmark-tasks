@@ -1,14 +1,14 @@
 """On the station table, in front of the arms: a grey polycarbonate enclosure (120 deep x 160 wide x 60 mm tall,
 3 mm walls, lid off, fixed in place) with an M20 cable gland fitted in the middle of its near wall (the wall facing
 the arms), its axis 35 mm above the table and pointing straight at the arms. The gland (black-grey polyamide) has a
-domed cap nut (24 mm across flats) which is loose: its seal is open (13 mm), ready for a cable.
+domed cap nut (24 mm across flats) which is loose, on the thread's first turn: its seal is open (14.5 mm), ready for a cable.
 In front of the box a grey PVC-sheathed control cable (3 cores x 1.5 mm2, 8 mm round) lies on the table in a curve.
 Its far end is held in a black cable clamp on the table to the front right; its free end is prepared: the sheath stripped
 back 75 mm, the three cores (brown, blue, green-yellow) taped together.
 
 The cap nut tightens clockwise (as seen from the arms). As it turns down, the seal closes on the cable and grips it;
-about 2 turns bring the seal onto the cable, and from there between 0.4 and 1 turn more makes it snug. Past 1 turn it
-is over-tightened, and turned 1.3 turns or more past first contact, the seal crushes the sheath.
+3 turns bring the seal onto the cable, and from there between 1 and 1.5 turns more makes it snug. Past 1.5 turns it
+is over-tightened, and turned 1.75 turns or more past first contact, the seal crushes the sheath.
 
 Task: fit the cable through the cable gland into the box until its sheath reaches at least 5 mm past the gland's
 inner end, then tighten the cap nut snug, between the marks, neither short of them nor past them. Then let go of both.
@@ -140,13 +140,13 @@ def inserted(objects) -> bool:
 
 
 def snug(objects) -> bool:
-    """B: the nut between the marks: 0.4 to under 1 turn past the seal's first contact."""
+    """B: the nut between the marks: 1 to under 1.5 turns past the seal's first contact."""
     g = objects["gland"]
     return bool(g.contact_turns is not None and cg.SNUG_TURNS[0] <= g.past_contact < cg.SNUG_TURNS[1])
 
 
 def overtight(objects) -> bool:
-    """The nut past the upper mark (1 turn past first contact) but not yet crushing the sheath (1.3 turns)."""
+    """The nut past the upper mark (1.5 turns past first contact) but not yet crushing the sheath (1.75 turns)."""
     g = objects["gland"]
     return bool(g.contact_turns is not None and g.past_contact >= cg.SNUG_TURNS[1] and not g.crushed)
 
@@ -157,7 +157,7 @@ def holds(objects) -> bool:
 
 
 def score(objects) -> float:
-    """0 crushed (ever turned 1.3 turns past first contact) or the sheath not 5 mm past the gland's inner end;
+    """0 crushed (ever turned 1.75 turns past first contact) or the sheath not 5 mm past the gland's inner end;
     0.25 sheath past; 0.5 also holds the pull test; 0.75 holds but the nut past the upper mark (over-tightened);
     1.0 holds and the nut between the marks (snug)."""
     g = objects["gland"]

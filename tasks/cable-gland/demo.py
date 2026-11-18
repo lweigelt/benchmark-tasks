@@ -43,7 +43,8 @@ INSTRUCTION = (
     "end, then tighten the cap nut snug, between the marks, neither short of them nor past them. Then let go of both."
 )
 VARIANTS = ("full", "overtight", "loose", "no_tighten", "crush")
-TARGET_PAST = {"full": 0.65, "overtight": 1.12, "loose": 0.3, "no_tighten": None, "crush": 1.45}
+TARGET_PAST = {"full": 1.25, "overtight": 1.62, "loose": 0.5, "no_tighten": None, "crush": 1.9}  # between the
+# measured marks (H 1.0, T 1.5, D 1.75 turns past first contact)
 CAMERAS = ("top_cam", "left_cam", "right_cam")
 CONTROL_HZ = 20.0
 DT = 1.0 / CONTROL_HZ

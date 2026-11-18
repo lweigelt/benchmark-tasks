@@ -73,18 +73,21 @@ BORE_X = (-15.0 * MM, GLAND_INNER_X)
 NUT_AF = 24 * MM
 NUT_HEX_LEN = 14 * MM
 NUT_DOME_LEN = 6 * MM
-NUT_X0 = -29.1 * MM  # the nut's hex starts here (wall side at NUT_X0 + 14) with the nut at its start (loose)
+NUT_X0 = -30.6 * MM  # the nut's hex starts here (wall side at NUT_X0 + 14) with the nut at its start: on the
+# thread's first turn (loose)
 MOUTH_R = 6.5 * MM  # the cap's mouth (13 mm) ...
 MOUTH_LEAD_R = 9.5 * MM  # ... with a 45 degree lead-in from 19 mm
 NUT_INNER_R = 10.0 * MM  # the hex's inside (over the body's thread)
 SEAL_X = (-27.0 * MM, -15.0 * MM)  # the seal pads' axial span (fixed: the cap's cone squeezes them radially)
-SEAL_OPEN_R = 6.5 * MM  # the pads' inner radius with the nut at its start (13 mm open)
+SEAL_OPEN_R = 7.265 * MM  # the pads' inner radius with the nut at its start (14.5 mm open): first contact on the 8 mm
+# cable 3 turns from the thread's start, as measured on a real gland (with 6.5 mm it came after 2.15 turns)
 PAD_THICK = 2.0 * MM
 PAD_LEAD = 1.5 * MM  # the pads' lead-in (45 degrees) at the seal's front
 PAD_ARC = math.radians(50.0)  # each of 6 pads (10 degree gaps)
 SEAL_N = 6
 SEAL_RATIO = 0.6  # radial closing per axial nut travel (the cap's cone)
-NUT_TRAVEL = 7.0 * MM  # the thread joint's range [0, NUT_TRAVEL]: at the end the nut sits on the flange
+NUT_TRAVEL = 8.5 * MM  # the thread joint's range [0, NUT_TRAVEL]: at the end the nut sits on the flange (5.67 turns:
+# 2.67 past first contact, beyond the measured damage mark at 1.75)
 PAD_K = 8.0e4  # N/m: each pad's radial spring (the rubber's give; at 40 N/mm the cable only held 30 N from ~0.45 turn
 # past first contact, leaving no room below the lower mark, demo run 32)
 PAD_D = 0.3  # N s/m
@@ -138,9 +141,12 @@ SHEATH_PAST = 5.0 * MM  # the sheath's end at least this past the gland's inner 
 CONTACT_DEFL = 0.02 * MM  # the seal grips the cable all round: every pad pushed back at least this ... (the mean let
 # a cable resting on the lower pads count as contact half a turn early, demo run 14)
 CONTACT_S = 0.25  # ... for this long in a row
-SNUG_TURNS = (0.4, 1.0)  # the marks: nut turns past the seal's first contact (snug between them; past the upper one:
-# over-tightened, the seal overstressed but the sheath intact)
-CRUSH_TURNS = 1.3  # turned this far past first contact, the seal crushes the sheath (for good)
+SNUG_TURNS = (1.0, 1.5)  # the marks: nut turns past the seal's first contact (snug between them; past the upper one:
+# over-tightened, the seal overstressed but the sheath intact), measured on a real M20 polyamide gland with an 8 mm
+# H05VV-F 3G1.5 cable (three glands, matching results): H = 1.0 (the first 1/8-turn step holding a 3.06 kg weight),
+# T = 1.5 (3 Nm reached, torque wrench)
+CRUSH_TURNS = 1.75  # turned this far past first contact, the seal crushes the sheath (for good): measured, the first
+# 1/8-turn step at which the seal cage's teeth marked the sheath
 PULL_FORCE = 30.0  # N
 PULL_MAX_MOVE = 2.0 * MM
 PULL_RAMP_S = 1.0  # the pull ramps up over this (as a hand on a spring scale; ramped in 0.5 s, a slipping cable was
